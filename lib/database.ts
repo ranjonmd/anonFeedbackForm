@@ -40,6 +40,8 @@ export async function createTable() {
       CREATE TABLE IF NOT EXISTS complaints (
         id SERIAL PRIMARY KEY,
         content TEXT NOT NULL,
+        email VARCHAR(255),
+        phone VARCHAR(20),
         created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
       );
     `

@@ -3,7 +3,7 @@ import { db, createTable } from '@/lib/database'
 
 export async function POST(request: NextRequest) {
     try {
-        const { content } = await request.json()
+        const { content, email, phone } = await request.json()
 
         // Validate input
         if (!content || typeof content !== 'string' || content.trim().length === 0) {
@@ -20,6 +20,8 @@ export async function POST(request: NextRequest) {
             )
         }
 
+
+
         // Ensure table exists
         await createTable()
 
@@ -27,8 +29,12 @@ export async function POST(request: NextRequest) {
         const client = await db.connect()
         try {
             const result = await client.query(
-                'INSERT INTO complaints (content) VALUES ($1) RETURNING id, created_at',
-                [content.trim()]
+                'INSERT INTO complaints (content, email, phone) VALUES ($1, $2, $3) RETURNING id, created_at',
+                [
+                    content.trim(),
+                    email && email.trim() ? email.trim() : null,
+                    phone && phone.trim() ? phone.trim() : null
+                ]
             )
 
             const { id, created_at } = result.rows[0]
@@ -36,6 +42,8 @@ export async function POST(request: NextRequest) {
             console.log('Stored feedback:', {
                 id,
                 content: content.trim(),
+                email: email && email.trim() ? email.trim() : null,
+                phone: phone && phone.trim() ? phone.trim() : null,
                 created_at,
                 ip: request.headers.get('x-forwarded-for') || request.ip || 'unknown'
             })
