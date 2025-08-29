@@ -1,8 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db, createTable } from '@/lib/database'
+import { encrypt } from '@/lib/encryption'
 
 export async function POST(request: NextRequest) {
     try {
+        // Debug: Check if environment variables are loaded
+        console.log('Environment check:', {
+            hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+            hasEncryptionKey: !!process.env.ENCRYPTION_KEY,
+            supabaseUrlLength: process.env.NEXT_PUBLIC_SUPABASE_URL?.length || 0
+        })
+
         const { content, email, phone } = await request.json()
 
         // Validate input
@@ -25,25 +33,26 @@ export async function POST(request: NextRequest) {
         // Ensure table exists
         await createTable()
 
-        // Store in database
+        // Encrypt sensitive data
+        const encryptedContent = encrypt(content.trim())
+        const encryptedEmail = email && email.trim() ? encrypt(email.trim()) : null
+        const encryptedPhone = phone && phone.trim() ? encrypt(phone.trim()) : null
+
+        // Store encrypted data in database
         const client = await db.connect()
         try {
             const result = await client.query(
                 'INSERT INTO complaints (content, email, phone) VALUES ($1, $2, $3) RETURNING id, created_at',
-                [
-                    content.trim(),
-                    email && email.trim() ? email.trim() : null,
-                    phone && phone.trim() ? phone.trim() : null
-                ]
+                [encryptedContent, encryptedEmail, encryptedPhone]
             )
 
             const { id, created_at } = result.rows[0]
 
-            console.log('Stored feedback:', {
+            console.log('Stored encrypted feedback:', {
                 id,
-                content: content.trim(),
-                email: email && email.trim() ? email.trim() : null,
-                phone: phone && phone.trim() ? phone.trim() : null,
+                content: '[ENCRYPTED]',
+                email: encryptedEmail ? '[ENCRYPTED]' : null,
+                phone: encryptedPhone ? '[ENCRYPTED]' : null,
                 created_at,
                 ip: request.headers.get('x-forwarded-for') || request.ip || 'unknown'
             })

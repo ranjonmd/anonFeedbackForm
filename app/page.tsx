@@ -18,8 +18,8 @@ export default function Home() {
                 <SubmitForm />
 
                 <div className="mt-8 text-center text-sm text-gray-500">
-                    <p>Step 3: Database storage working</p>
-                    <p>Form submits to database via Supabase transaction pooler</p>
+                    <p>Step 4: Encryption working</p>
+                    <p>All data encrypted with AES-GCM before database storage</p>
                 </div>
             </div>
         </div>
