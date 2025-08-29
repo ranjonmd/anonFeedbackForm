@@ -59,14 +59,14 @@ async function createInitialUsers() {
         // Create initial admin users
         const users = [
             {
-                username: 'rgardner',
-                email: 'rjgardnermd@gmail.com',
-                password: 'temp123456'
+                username: 'rhgardner',
+                email: 'rhgardner@uams.edu',
+                password: 'rhgardner'
             },
             {
-                username: 'jbg',
-                email: 'jgardnerx85@gmail.com',
-                password: 'temp123456'
+                username: 'tachunn',
+                email: 'tachunn@uams.edu',
+                password: 'tachunn'
             }
         ]
 
