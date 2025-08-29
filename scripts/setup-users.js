@@ -120,11 +120,6 @@ async function main() {
     try {
         await createInitialUsers()
         console.log('✅ Setup complete!')
-        console.log('\n📋 Login Credentials:')
-        console.log('   Username: rgardner or jbg')
-        console.log('   Email: rjgardnermd@gmail.com or jgardnerx85@gmail.com')
-        console.log('   Password: temp123456')
-        console.log('\n⚠️  IMPORTANT: Change these passwords after first login!')
     } catch (error) {
         console.error('❌ Setup failed:', error)
         process.exit(1)
