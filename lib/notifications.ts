@@ -5,16 +5,26 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 
 // Get admin email addresses for notifications
 async function getAdminEmails(): Promise<string[]> {
+    const startTime = Date.now()
+    console.log('📧 Getting admin emails...')
+
     try {
-        return await getAdminEmailsFromSupabase()
+        const emails = await getAdminEmailsFromSupabase()
+        const time = Date.now() - startTime
+        console.log(`📧 Got ${emails.length} admin emails in ${time}ms`)
+        return emails
     } catch (error) {
-        console.error('Failed to get admin emails:', error)
+        const time = Date.now() - startTime
+        console.error(`❌ Failed to get admin emails after ${time}ms:`, error)
         return []
     }
 }
 
 // Send email notification
 export async function sendEmailNotification(feedbackId: number, hasContactInfo: boolean): Promise<boolean> {
+    const startTime = Date.now()
+    console.log('📧 Starting email notification...')
+
     try {
         const adminEmails = await getAdminEmails()
 
@@ -48,6 +58,7 @@ export async function sendEmailNotification(feedbackId: number, hasContactInfo: 
             </div>
         `
 
+        const emailStartTime = Date.now()
         const { data, error } = await resend.emails.send({
             from: process.env.FROM_EMAIL || 'noreply@yourdomain.com',
             to: adminEmails,
@@ -55,27 +66,37 @@ export async function sendEmailNotification(feedbackId: number, hasContactInfo: 
             html
         })
 
+        const emailTime = Date.now() - emailStartTime
+        console.log(`📧 Resend API call took ${emailTime}ms`)
+
         if (error) {
             console.error('Failed to send email notification:', error)
             return false
         }
 
-        console.log('✅ Email notification sent:', data)
+        const totalTime = Date.now() - startTime
+        console.log(`✅ Email notification sent in ${totalTime}ms:`, data)
         return true
     } catch (error) {
-        console.error('Email notification error:', error)
+        const totalTime = Date.now() - startTime
+        console.error(`❌ Email notification error after ${totalTime}ms:`, error)
         return false
     }
 }
 
 // Send notification for new feedback
 export async function notifyNewFeedback(feedbackId: number, hasContactInfo: boolean): Promise<void> {
+    const startTime = Date.now()
+    console.log(`🚀 Starting notification for feedback ID: ${feedbackId}`)
+
     try {
         // Send email notification
         await sendEmailNotification(feedbackId, hasContactInfo)
 
-        console.log(`✅ Notification sent for feedback ID: ${feedbackId}`)
+        const totalTime = Date.now() - startTime
+        console.log(`✅ Notification sent for feedback ID: ${feedbackId} in ${totalTime}ms`)
     } catch (error) {
-        console.error('Failed to send notification:', error)
+        const totalTime = Date.now() - startTime
+        console.error(`❌ Failed to send notification after ${totalTime}ms:`, error)
     }
 }

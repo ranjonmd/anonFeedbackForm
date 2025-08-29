@@ -48,11 +48,14 @@ export async function POST(request: NextRequest) {
             ip: request.headers.get('x-forwarded-for') || request.ip || 'unknown'
         })
 
-        // Send notification (don't await to avoid blocking the response)
+        // Send notification (wait for it to complete)
         const hasContactInfo = !!(email && email.trim()) || !!(phone && phone.trim())
-        notifyNewFeedback(result.id, hasContactInfo).catch(error => {
+        try {
+            await notifyNewFeedback(result.id, hasContactInfo)
+        } catch (error) {
             console.error('Notification failed:', error)
-        })
+            // Don't fail the whole request if notification fails
+        }
 
         // Return success response
         return NextResponse.json({
