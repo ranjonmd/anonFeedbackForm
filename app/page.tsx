@@ -18,8 +18,8 @@ export default function Home() {
                 <SubmitForm />
 
                 <div className="mt-8 text-center text-sm text-gray-500">
-                    <p>Step 1: Basic form (no backend yet)</p>
-                    <p>Form validation and UI working</p>
+                    <p>Step 2: API endpoint working</p>
+                    <p>Form submits to /api/submit and logs to console</p>
                 </div>
             </div>
         </div>

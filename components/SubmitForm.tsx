@@ -18,15 +18,37 @@ export function SubmitForm() {
         setIsSubmitting(true)
         setMessage(null)
 
-        // For now, just show success message (no backend yet)
-        setTimeout(() => {
-            setMessage({
-                type: 'success',
-                text: 'Thank you! Your feedback has been submitted anonymously.'
+        try {
+            const response = await fetch('/api/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ content: content.trim() }),
             })
-            setContent('')
+
+            const data = await response.json()
+
+            if (response.ok) {
+                setMessage({
+                    type: 'success',
+                    text: 'Thank you! Your feedback has been submitted anonymously.'
+                })
+                setContent('')
+            } else {
+                setMessage({
+                    type: 'error',
+                    text: data.error || 'Failed to submit feedback. Please try again.'
+                })
+            }
+        } catch (error) {
+            setMessage({
+                type: 'error',
+                text: 'Network error. Please check your connection and try again.'
+            })
+        } finally {
             setIsSubmitting(false)
-        }, 1000)
+        }
     }
 
     return (

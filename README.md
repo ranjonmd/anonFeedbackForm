@@ -2,16 +2,19 @@
 
 A simple anonymous feedback form built with Next.js 14 and Tailwind CSS.
 
-## 🎯 Current Status: Step 1 - Basic Form
+## 🎯 Current Status: Step 2 - API Endpoint
 
 **What works:**
 - ✅ Beautiful, responsive form UI
 - ✅ Form validation (required field, character limit)
 - ✅ Loading states and success/error messages
 - ✅ Character counter (10,000 character limit)
+- ✅ API endpoint at `/api/submit`
+- ✅ Server-side validation
+- ✅ Console logging of submissions
 
 **What doesn't work yet:**
-- ❌ No backend storage
+- ❌ No database storage
 - ❌ No encryption
 - ❌ No notifications
 - ❌ No viewing system
@@ -36,10 +39,10 @@ A simple anonymous feedback form built with Next.js 14 and Tailwind CSS.
 1. Try submitting an empty form (should show error)
 2. Try typing more than 10,000 characters (should be limited)
 3. Try submitting valid feedback (should show success message)
+4. Check the terminal/console for logged submissions
 
 ## 📋 Next Steps
 
-- **Step 2**: Add API endpoint to handle form submission
 - **Step 3**: Add database storage
 - **Step 4**: Add encryption
 - **Step 5**: Add authentication for viewing
