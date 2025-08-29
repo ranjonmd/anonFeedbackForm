@@ -44,6 +44,24 @@ export default function AdminPage() {
         if (savedToken) {
             setToken(savedToken)
             setIsAuthenticated(true)
+
+            // Decode JWT to get user info
+            try {
+                const payload = JSON.parse(atob(savedToken.split('.')[1]))
+                setUser({
+                    id: payload.userId,
+                    username: payload.username,
+                    email: payload.email,
+                    role: payload.role,
+                    requiresPasswordReset: payload.requiresPasswordReset
+                })
+            } catch (error) {
+                console.error('Failed to decode JWT:', error)
+                // Token might be invalid, clear it
+                localStorage.removeItem('admin-token')
+                return
+            }
+
             loadFeedback(savedToken)
         }
     }, [])
@@ -361,7 +379,7 @@ export default function AdminPage() {
                                                     {item.content}
                                                 </p>
                                                 <span className="text-xs text-gray-500 ml-4">
-                                                    {new Date(item.created_at).toLocaleDateString()}
+                                                    {new Date(item.created_at).toLocaleString()}
                                                 </span>
                                             </div>
 
