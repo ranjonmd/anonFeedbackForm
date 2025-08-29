@@ -18,8 +18,8 @@ export default function Home() {
                 <SubmitForm />
 
                 <div className="mt-8 text-center text-sm text-gray-500">
-                    <p>Step 4: Encryption working</p>
-                    <p>All data encrypted with AES-GCM before database storage</p>
+                    <p>Step 5: JWT Authentication working</p>
+                    <p>Admin login at /admin with user management and password reset</p>
                 </div>
             </div>
         </div>
