@@ -1,20 +1,21 @@
-const { Pool } = require('pg')
+const { createClient } = require('@supabase/supabase-js')
 const crypto = require('crypto')
 require('dotenv').config({ path: '.env.local' })
 
-// Parse the connection string from environment variable
-const connectionString = process.env.NEXT_PUBLIC_SUPABASE_URL
+// Get Supabase configuration
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-if (!connectionString) {
-    console.error('❌ NEXT_PUBLIC_SUPABASE_URL environment variable is required')
+if (!supabaseUrl || !supabaseServiceKey) {
+    console.error('❌ NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables are required')
     process.exit(1)
 }
 
-// Create a connection pool
-const db = new Pool({
-    connectionString,
-    ssl: {
-        rejectUnauthorized: false
+// Create Supabase client
+const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+    auth: {
+        autoRefreshToken: false,
+        persistSession: false
     }
 })
 
@@ -25,30 +26,23 @@ function hashPassword(password) {
     return `${salt}:${hash}`
 }
 
-// Create users table
-async function createUsersTable() {
+// Check if users table exists
+async function checkUsersTable() {
     try {
-        const client = await db.connect()
+        const { data, error } = await supabase
+            .from('users')
+            .select('id')
+            .limit(1)
 
-        const createUsersTableQuery = `
-            CREATE TABLE IF NOT EXISTS users (
-                id SERIAL PRIMARY KEY,
-                username VARCHAR(50) UNIQUE NOT NULL,
-                email VARCHAR(255) UNIQUE NOT NULL,
-                password_hash VARCHAR(255) NOT NULL,
-                role VARCHAR(20) DEFAULT 'admin',
-                requires_password_reset BOOLEAN DEFAULT true,
-                created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-                updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-            );
-        `
+        if (error) {
+            console.error('❌ Users table does not exist. Please create it in Supabase dashboard first.')
+            return false
+        }
 
-        await client.query(createUsersTableQuery)
-        console.log('✅ Users table ready')
-        client.release()
+        console.log('✅ Users table exists')
         return true
     } catch (error) {
-        console.error('❌ Failed to create users table:', error)
+        console.error('❌ Failed to check users table:', error)
         return false
     }
 }
@@ -56,10 +50,11 @@ async function createUsersTable() {
 // Create initial admin users
 async function createInitialUsers() {
     try {
-        const client = await db.connect()
-
-        // Ensure users table exists
-        await createUsersTable()
+        // Check if users table exists
+        const tableExists = await checkUsersTable()
+        if (!tableExists) {
+            return false
+        }
 
         // Create initial admin users
         const users = [
@@ -79,24 +74,38 @@ async function createInitialUsers() {
             const passwordHash = hashPassword(user.password)
 
             // Check if user already exists
-            const existingUser = await client.query(
-                'SELECT id FROM users WHERE username = $1 OR email = $2',
-                [user.username, user.email]
-            )
+            const { data: existingUsers, error: checkError } = await supabase
+                .from('users')
+                .select('id')
+                .or(`username.eq.${user.username},email.eq.${user.email}`)
 
-            if (existingUser.rows.length === 0) {
-                await client.query(
-                    'INSERT INTO users (username, email, password_hash, role, requires_password_reset) VALUES ($1, $2, $3, $4, $5)',
-                    [user.username, user.email, passwordHash, 'admin', true]
-                )
-                console.log(`✅ Created user: ${user.username} (${user.email})`)
-                console.log(`   Temporary password: ${user.password}`)
+            if (checkError) {
+                console.error(`❌ Error checking user ${user.username}:`, checkError)
+                continue
+            }
+
+            if (!existingUsers || existingUsers.length === 0) {
+                const { error: insertError } = await supabase
+                    .from('users')
+                    .insert([{
+                        username: user.username,
+                        email: user.email,
+                        password_hash: passwordHash,
+                        role: 'admin',
+                        requires_password_reset: true
+                    }])
+
+                if (insertError) {
+                    console.error(`❌ Failed to create user ${user.username}:`, insertError)
+                } else {
+                    console.log(`✅ Created user: ${user.username} (${user.email})`)
+                    console.log(`   Temporary password: ${user.password}`)
+                }
             } else {
                 console.log(`⚠️ User already exists: ${user.username}`)
             }
         }
 
-        client.release()
         return true
     } catch (error) {
         console.error('❌ Failed to create initial users:', error)
@@ -112,15 +121,13 @@ async function main() {
         await createInitialUsers()
         console.log('✅ Setup complete!')
         console.log('\n📋 Login Credentials:')
-        console.log('   Username: admin1 or admin2')
-        console.log('   Email: admin1@example.com or admin2@example.com')
+        console.log('   Username: rgardner or jbg')
+        console.log('   Email: rjgardnermd@gmail.com or jgardnerx85@gmail.com')
         console.log('   Password: temp123456')
         console.log('\n⚠️  IMPORTANT: Change these passwords after first login!')
     } catch (error) {
         console.error('❌ Setup failed:', error)
         process.exit(1)
-    } finally {
-        await db.end()
     }
 }
 

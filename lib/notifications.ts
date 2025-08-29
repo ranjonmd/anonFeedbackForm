@@ -1,15 +1,12 @@
 import { Resend } from 'resend'
-import { db } from './database'
+import { getAdminEmails as getAdminEmailsFromSupabase } from './supabase'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 // Get admin email addresses for notifications
 async function getAdminEmails(): Promise<string[]> {
     try {
-        const client = await db.connect()
-        const result = await client.query('SELECT email FROM users WHERE role = $1', ['admin'])
-        client.release()
-        return result.rows.map(row => row.email)
+        return await getAdminEmailsFromSupabase()
     } catch (error) {
         console.error('Failed to get admin emails:', error)
         return []

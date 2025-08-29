@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db } from '@/lib/database'
+import { getComplaints } from '@/lib/supabase'
 import { decrypt } from '@/lib/encryption'
 import { verifyToken } from '@/lib/auth'
 
@@ -24,30 +24,22 @@ export async function GET(request: NextRequest) {
             )
         }
 
-        // Fetch encrypted feedback from database
-        const client = await db.connect()
-        try {
-            const result = await client.query(
-                'SELECT id, content, email, phone, created_at FROM complaints ORDER BY created_at DESC'
-            )
+        // Fetch encrypted feedback from database using Supabase client
+        const complaints = await getComplaints()
 
-            // Decrypt the feedback
-            const decryptedFeedback = result.rows.map(row => ({
-                id: row.id,
-                content: decrypt(row.content),
-                email: row.email ? decrypt(row.email) : null,
-                phone: row.phone ? decrypt(row.phone) : null,
-                created_at: row.created_at
-            }))
+        // Decrypt the feedback
+        const decryptedFeedback = complaints.map(row => ({
+            id: row.id,
+            content: decrypt(row.content),
+            email: row.email ? decrypt(row.email) : null,
+            phone: row.phone ? decrypt(row.phone) : null,
+            created_at: row.created_at
+        }))
 
-            return NextResponse.json({
-                success: true,
-                feedback: decryptedFeedback
-            })
-
-        } finally {
-            client.release()
-        }
+        return NextResponse.json({
+            success: true,
+            feedback: decryptedFeedback
+        })
 
     } catch (error) {
         console.error('Fetch feedback error:', error)

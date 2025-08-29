@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db, createTable } from '@/lib/database'
+import { insertComplaint } from '@/lib/supabase'
 import { encrypt } from '@/lib/encryption'
 import { notifyNewFeedback } from '@/lib/notifications'
 
@@ -31,49 +31,36 @@ export async function POST(request: NextRequest) {
 
 
 
-        // Ensure table exists
-        await createTable()
-
         // Encrypt sensitive data
         const encryptedContent = encrypt(content.trim())
         const encryptedEmail = email && email.trim() ? encrypt(email.trim()) : null
         const encryptedPhone = phone && phone.trim() ? encrypt(phone.trim()) : null
 
-        // Store encrypted data in database
-        const client = await db.connect()
-        try {
-            const result = await client.query(
-                'INSERT INTO complaints (content, email, phone) VALUES ($1, $2, $3) RETURNING id, created_at',
-                [encryptedContent, encryptedEmail, encryptedPhone]
-            )
+        // Store encrypted data in database using Supabase client
+        const result = await insertComplaint(encryptedContent, encryptedEmail, encryptedPhone)
 
-            const { id, created_at } = result.rows[0]
+        console.log('Stored encrypted feedback:', {
+            id: result.id,
+            content: '[ENCRYPTED]',
+            email: encryptedEmail ? '[ENCRYPTED]' : null,
+            phone: encryptedPhone ? '[ENCRYPTED]' : null,
+            created_at: result.created_at,
+            ip: request.headers.get('x-forwarded-for') || request.ip || 'unknown'
+        })
 
-            console.log('Stored encrypted feedback:', {
-                id,
-                content: '[ENCRYPTED]',
-                email: encryptedEmail ? '[ENCRYPTED]' : null,
-                phone: encryptedPhone ? '[ENCRYPTED]' : null,
-                created_at,
-                ip: request.headers.get('x-forwarded-for') || request.ip || 'unknown'
-            })
+        // Send notification (don't await to avoid blocking the response)
+        const hasContactInfo = !!(email && email.trim()) || !!(phone && phone.trim())
+        notifyNewFeedback(result.id, hasContactInfo).catch(error => {
+            console.error('Notification failed:', error)
+        })
 
-            // Send notification (don't await to avoid blocking the response)
-            const hasContactInfo = !!(email && email.trim()) || !!(phone && phone.trim())
-            notifyNewFeedback(id, hasContactInfo).catch(error => {
-                console.error('Notification failed:', error)
-            })
-
-            // Return success response
-            return NextResponse.json({
-                success: true,
-                message: 'Feedback submitted successfully',
-                id,
-                timestamp: created_at
-            })
-        } finally {
-            client.release()
-        }
+        // Return success response
+        return NextResponse.json({
+            success: true,
+            message: 'Feedback submitted successfully',
+            id: result.id,
+            timestamp: result.created_at
+        })
 
     } catch (error) {
         console.error('Submit error:', error)
