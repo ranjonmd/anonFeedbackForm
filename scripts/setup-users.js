@@ -68,11 +68,11 @@ async function createInitialUsers() {
                 email: 'rjgardnermd@gmail.com',
                 password: 'temp123456'
             },
-            // {
-            //     username: 'admin2',
-            //     email: 'admin2@example.com',
-            //     password: 'temp123456'
-            // }
+            {
+                username: 'jbg',
+                email: 'jgardnerx85@gmail.com',
+                password: 'temp123456'
+            }
         ]
 
         for (const user of users) {
