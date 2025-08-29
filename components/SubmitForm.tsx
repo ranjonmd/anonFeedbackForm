@@ -110,10 +110,10 @@ export function SubmitForm() {
     }
 
     return (
-        <div className="bg-white rounded-lg shadow-lg p-6">
+        <div className="bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-700">
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                    <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="content" className="block text-sm font-medium text-gray-200 mb-2">
                         Your Feedback *
                     </label>
                     <textarea
@@ -121,20 +121,20 @@ export function SubmitForm() {
                         value={content}
                         onChange={(e) => setContent(e.target.value)}
                         placeholder="Share your thoughts, concerns, or suggestions here..."
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                        className="w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none bg-gray-700 text-white placeholder-gray-400"
                         rows={6}
                         maxLength={10000}
                         disabled={isSubmitting}
                         required
                     />
-                    <div className="mt-1 text-sm text-gray-500 text-right">
+                    <div className="mt-1 text-sm text-gray-400 text-right">
                         {content.length}/10,000 characters
                     </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                        <label htmlFor="email" className="block text-sm font-medium text-gray-200 mb-2">
                             Email (optional)
                         </label>
                         <input
@@ -143,17 +143,17 @@ export function SubmitForm() {
                             value={email}
                             onChange={handleEmailChange}
                             placeholder="your.email@example.com"
-                            className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${emailError ? 'border-red-300' : 'border-gray-300'
+                            className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-700 text-white placeholder-gray-400 ${emailError ? 'border-red-500' : 'border-gray-600'
                                 }`}
                             disabled={isSubmitting}
                         />
                         {emailError && (
-                            <p className="mt-1 text-sm text-red-600">{emailError}</p>
+                            <p className="mt-1 text-sm text-red-400">{emailError}</p>
                         )}
                     </div>
 
                     <div>
-                        <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                        <label htmlFor="phone" className="block text-sm font-medium text-gray-200 mb-2">
                             Phone (optional)
                         </label>
                         <input
@@ -162,24 +162,24 @@ export function SubmitForm() {
                             value={phone}
                             onChange={handlePhoneChange}
                             placeholder="+1 (555) 123-4567"
-                            className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${phoneError ? 'border-red-300' : 'border-gray-300'
+                            className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-700 text-white placeholder-gray-400 ${phoneError ? 'border-red-500' : 'border-gray-600'
                                 }`}
                             disabled={isSubmitting}
                         />
                         {phoneError && (
-                            <p className="mt-1 text-sm text-red-600">{phoneError}</p>
+                            <p className="mt-1 text-sm text-red-400">{phoneError}</p>
                         )}
                     </div>
                 </div>
 
-                <div className="text-sm text-gray-500">
+                <div className="text-sm text-gray-400">
                     <p>Contact information is optional. Your feedback will be submitted anonymously regardless.</p>
                 </div>
 
                 {message && (
                     <div className={`p-3 rounded-md ${message.type === 'success'
-                        ? 'bg-green-50 text-green-800 border border-green-200'
-                        : 'bg-red-50 text-red-800 border border-red-200'
+                        ? 'bg-green-900 text-green-200 border border-green-700'
+                        : 'bg-red-900 text-red-200 border border-red-700'
                         }`}>
                         {message.text}
                     </div>
@@ -188,7 +188,7 @@ export function SubmitForm() {
                 <button
                     type="submit"
                     disabled={isSubmitting || !content.trim() || !!emailError || !!phoneError}
-                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                     {isSubmitting ? 'Submitting...' : 'Submit Anonymously'}
                 </button>

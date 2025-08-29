@@ -184,21 +184,21 @@ export default function AdminPage() {
 
     if (!isAuthenticated) {
         return (
-            <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+            <div className="min-h-screen bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                    <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
                         Admin Login
                     </h2>
-                    <p className="mt-2 text-center text-sm text-gray-600">
+                    <p className="mt-2 text-center text-sm text-gray-300">
                         Enter your credentials to view feedback
                     </p>
                 </div>
 
                 <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-                    <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+                    <div className="bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10 border border-gray-700">
                         <form onSubmit={handleLogin} className="space-y-6">
                             <div>
-                                <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+                                <label htmlFor="username" className="block text-sm font-medium text-gray-200">
                                     Username or Email
                                 </label>
                                 <div className="mt-1">
@@ -209,14 +209,14 @@ export default function AdminPage() {
                                         required
                                         value={username}
                                         onChange={(e) => setUsername(e.target.value)}
-                                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                        className="appearance-none block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-gray-700 text-white"
                                         disabled={isLoggingIn}
                                     />
                                 </div>
                             </div>
 
                             <div>
-                                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                                <label htmlFor="password" className="block text-sm font-medium text-gray-200">
                                     Password
                                 </label>
                                 <div className="mt-1">
@@ -227,14 +227,14 @@ export default function AdminPage() {
                                         required
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                        className="appearance-none block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-gray-700 text-white"
                                         disabled={isLoggingIn}
                                     />
                                 </div>
                             </div>
 
                             {loginError && (
-                                <div className="text-red-600 text-sm">
+                                <div className="text-red-400 text-sm">
                                     {loginError}
                                 </div>
                             )}
@@ -243,7 +243,7 @@ export default function AdminPage() {
                                 <button
                                     type="submit"
                                     disabled={isLoggingIn}
-                                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-blue-500 disabled:opacity-50"
                                 >
                                     {isLoggingIn ? 'Logging in...' : 'Login'}
                                 </button>
@@ -256,13 +256,13 @@ export default function AdminPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-900">
             <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
                 <div className="px-4 py-6 sm:px-0">
                     <div className="flex justify-between items-center mb-6">
                         <div>
-                            <h1 className="text-3xl font-bold text-gray-900">Feedback Dashboard</h1>
-                            <p className="text-sm text-gray-600 mt-1">
+                            <h1 className="text-3xl font-bold text-white">Feedback Dashboard</h1>
+                            <p className="text-sm text-gray-300 mt-1">
                                 Welcome, {user?.username} ({user?.email})
                             </p>
                         </div>
@@ -285,17 +285,17 @@ export default function AdminPage() {
                     </div>
 
                     {user?.requiresPasswordReset && !showPasswordReset && (
-                        <div className="mb-4 bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded">
+                        <div className="mb-4 bg-yellow-900 border border-yellow-700 text-yellow-200 px-4 py-3 rounded">
                             <strong>Password Reset Required:</strong> Please change your temporary password.
                         </div>
                     )}
 
                     {showPasswordReset && (
-                        <div className="mb-6 bg-white shadow sm:rounded-lg p-6">
-                            <h3 className="text-lg font-medium text-gray-900 mb-4">Change Password</h3>
+                        <div className="mb-6 bg-gray-800 shadow sm:rounded-lg p-6 border border-gray-700">
+                            <h3 className="text-lg font-medium text-white mb-4">Change Password</h3>
                             <form onSubmit={handlePasswordChange} className="space-y-4">
                                 <div>
-                                    <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700">
+                                    <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-200">
                                         Current Password
                                     </label>
                                     <input
@@ -304,11 +304,11 @@ export default function AdminPage() {
                                         value={currentPassword}
                                         onChange={(e) => setCurrentPassword(e.target.value)}
                                         required
-                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                        className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-gray-700 text-white"
                                     />
                                 </div>
                                 <div>
-                                    <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
+                                    <label htmlFor="newPassword" className="block text-sm font-medium text-gray-200">
                                         New Password
                                     </label>
                                     <input
@@ -318,11 +318,11 @@ export default function AdminPage() {
                                         onChange={(e) => setNewPassword(e.target.value)}
                                         required
                                         minLength={8}
-                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                        className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-gray-700 text-white"
                                     />
                                 </div>
                                 <div>
-                                    <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                                    <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-200">
                                         Confirm New Password
                                     </label>
                                     <input
@@ -331,14 +331,14 @@ export default function AdminPage() {
                                         value={confirmPassword}
                                         onChange={(e) => setConfirmPassword(e.target.value)}
                                         required
-                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                        className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-gray-700 text-white"
                                     />
                                 </div>
                                 {passwordError && (
-                                    <div className="text-red-600 text-sm">{passwordError}</div>
+                                    <div className="text-red-400 text-sm">{passwordError}</div>
                                 )}
                                 {passwordSuccess && (
-                                    <div className="text-green-600 text-sm">{passwordSuccess}</div>
+                                    <div className="text-green-400 text-sm">{passwordSuccess}</div>
                                 )}
                                 <div className="flex space-x-3">
                                     <button
@@ -351,7 +351,7 @@ export default function AdminPage() {
                                     <button
                                         type="button"
                                         onClick={() => setShowPasswordReset(false)}
-                                        className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                        className="bg-gray-600 text-gray-200 px-4 py-2 rounded-md hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500"
                                     >
                                         Cancel
                                     </button>
@@ -360,31 +360,31 @@ export default function AdminPage() {
                         </div>
                     )}
 
-                    <div className="bg-white shadow overflow-hidden sm:rounded-md">
+                    <div className="bg-gray-800 shadow overflow-hidden sm:rounded-md border border-gray-700">
                         {isLoadingFeedback ? (
-                            <div className="p-6 text-center text-gray-500">
+                            <div className="p-6 text-center text-gray-400">
                                 Loading feedback...
                             </div>
                         ) : feedback.length === 0 ? (
-                            <div className="p-6 text-center text-gray-500">
+                            <div className="p-6 text-center text-gray-400">
                                 No feedback submitted yet.
                             </div>
                         ) : (
-                            <ul className="divide-y divide-gray-200">
+                            <ul className="divide-y divide-gray-700">
                                 {feedback.map((item) => (
                                     <li key={item.id} className="px-6 py-4">
                                         <div className="space-y-2">
                                             <div className="flex justify-between items-start">
-                                                <p className="text-sm text-gray-900 whitespace-pre-wrap">
+                                                <p className="text-sm text-gray-200 whitespace-pre-wrap">
                                                     {item.content}
                                                 </p>
-                                                <span className="text-xs text-gray-500 ml-4">
+                                                <span className="text-xs text-gray-400 ml-4">
                                                     {new Date(item.created_at).toLocaleString()}
                                                 </span>
                                             </div>
 
                                             {(item.email || item.phone) && (
-                                                <div className="text-xs text-gray-600 space-y-1">
+                                                <div className="text-xs text-gray-400 space-y-1">
                                                     {item.email && (
                                                         <div>📧 {item.email}</div>
                                                     )}
