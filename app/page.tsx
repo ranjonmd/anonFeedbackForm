@@ -18,8 +18,8 @@ export default function Home() {
                 <SubmitForm />
 
                 <div className="mt-8 text-center text-sm text-gray-500">
-                    <p>Step 2: API endpoint working</p>
-                    <p>Form submits to /api/submit and logs to console</p>
+                    <p>Step 3: Database storage working</p>
+                    <p>Form submits to database via Supabase transaction pooler</p>
                 </div>
             </div>
         </div>

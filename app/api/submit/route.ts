@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { db, createTable } from '@/lib/database'
 
 export async function POST(request: NextRequest) {
     try {
@@ -19,19 +20,36 @@ export async function POST(request: NextRequest) {
             )
         }
 
-        // For now, just log the submission (no database yet)
-        console.log('Received feedback:', {
-            content: content.trim(),
-            timestamp: new Date().toISOString(),
-            ip: request.headers.get('x-forwarded-for') || request.ip || 'unknown'
-        })
+        // Ensure table exists
+        await createTable()
 
-        // Return success response
-        return NextResponse.json({
-            success: true,
-            message: 'Feedback submitted successfully',
-            timestamp: new Date().toISOString()
-        })
+        // Store in database
+        const client = await db.connect()
+        try {
+            const result = await client.query(
+                'INSERT INTO complaints (content) VALUES ($1) RETURNING id, created_at',
+                [content.trim()]
+            )
+
+            const { id, created_at } = result.rows[0]
+
+            console.log('Stored feedback:', {
+                id,
+                content: content.trim(),
+                created_at,
+                ip: request.headers.get('x-forwarded-for') || request.ip || 'unknown'
+            })
+
+            // Return success response
+            return NextResponse.json({
+                success: true,
+                message: 'Feedback submitted successfully',
+                id,
+                timestamp: created_at
+            })
+        } finally {
+            client.release()
+        }
 
     } catch (error) {
         console.error('Submit error:', error)
