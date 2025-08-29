@@ -173,7 +173,7 @@ export function SubmitForm() {
                 </div>
 
                 <div className="text-sm text-gray-400">
-                    <p>Contact information is optional. Your feedback will be submitted anonymously regardless.</p>
+                    <p>Contact information is optional in case you'd like follow-up communication.</p>
                 </div>
 
                 {message && (

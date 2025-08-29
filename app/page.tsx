@@ -17,10 +17,6 @@ export default function Home() {
 
                 <SubmitForm />
 
-                <div className="mt-8 text-center text-sm text-gray-400">
-                    <p>Step 6: Notifications working</p>
-                    <p>Email alerts sent to admins when new feedback is submitted</p>
-                </div>
             </div>
         </div>
     )
