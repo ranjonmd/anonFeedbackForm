@@ -61,40 +61,4 @@ export async function getAdminEmails() {
     return data.map(row => row.email)
 }
 
-export async function authenticateUser(username: string, password: string) {
-    // First, get the user by username or email
-    const { data: users, error: userError } = await supabase
-        .from('users')
-        .select('*')
-        .or(`username.eq.${username},email.eq.${username}`)
-        .limit(1)
 
-    if (userError || !users || users.length === 0) {
-        return null
-    }
-
-    const user = users[0]
-
-    // Verify password (you'll need to implement password hashing comparison)
-    // For now, we'll need to handle this differently since Supabase doesn't have built-in password hashing
-    // This is a simplified version - you might want to use a different approach
-
-    return user
-}
-
-export async function changePassword(userId: number, newPassword: string) {
-    // You'll need to implement password hashing here
-    const { error } = await supabase
-        .from('users')
-        .update({
-            password_hash: newPassword, // This should be hashed
-            requires_password_reset: false
-        })
-        .eq('id', userId)
-
-    if (error) {
-        throw new Error(`Failed to change password: ${error.message}`)
-    }
-
-    return true
-}

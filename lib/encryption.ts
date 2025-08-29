@@ -69,22 +69,4 @@ export function decrypt(encryptedText: string): string {
   }
 }
 
-// Test function to verify encryption/decryption works
-export function testEncryption(): boolean {
-  try {
-    const testData = 'This is a test message for encryption'
-    const encrypted = encrypt(testData)
-    const decrypted = decrypt(encrypted)
 
-    if (decrypted === testData) {
-      console.log('✅ Encryption/decryption test passed')
-      return true
-    } else {
-      console.error('❌ Encryption/decryption test failed')
-      return false
-    }
-  } catch (error) {
-    console.error('❌ Encryption test error:', error)
-    return false
-  }
-}
