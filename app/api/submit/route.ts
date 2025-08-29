@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db, createTable } from '@/lib/database'
 import { encrypt } from '@/lib/encryption'
+import { notifyNewFeedback } from '@/lib/notifications'
 
 export async function POST(request: NextRequest) {
     try {
@@ -55,6 +56,12 @@ export async function POST(request: NextRequest) {
                 phone: encryptedPhone ? '[ENCRYPTED]' : null,
                 created_at,
                 ip: request.headers.get('x-forwarded-for') || request.ip || 'unknown'
+            })
+
+            // Send notification (don't await to avoid blocking the response)
+            const hasContactInfo = !!(email && email.trim()) || !!(phone && phone.trim())
+            notifyNewFeedback(id, hasContactInfo).catch(error => {
+                console.error('Notification failed:', error)
             })
 
             // Return success response
